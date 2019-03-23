@@ -4,6 +4,7 @@
 
 #include "known_nodes_hashmap.h"
 #include "node.h"
+#include "logging.h"
 
 struct known_node_hashmap_entry ** known_nodes;
 
@@ -41,18 +42,39 @@ void add_known_node(struct node * node) {
     strcpy((*pos)->ip, node->ip);
     (*pos)->port = node->port;
 
-    printf("Adding node %s:%s:%u\n", node->name, node->ip, node->port);
+    log_info("Adding node %s:%s:%u", node->name, node->ip, node->port);
 
     if (append_to != NULL) {
         append_to->next = *pos;
     }
 }
 
+void for_each_known_node(known_node_callback_t callback, void * args) {
+    for (int i = 0; i < HASHMAP_ENTRIES; i++) {
+        struct known_node_hashmap_entry * current = known_nodes[i];
+        while (current != NULL) {
+            callback(current, args);
+            current = current->next;
+        }
+    }
+}
+
+struct known_node_hashmap_entry * look_up_known_node(char * ip, unsigned short port) {
+    for (int i = 0; i < HASHMAP_ENTRIES; i++) {
+        struct known_node_hashmap_entry * current = known_nodes[i];
+        while (current != NULL) {
+            if (strcmp(current->ip, ip) == 0 && port == current->port) return current;
+            current = current->next;
+        }
+    }
+    return NULL;
+}
+
 void dbg_print_all_known_nodes() {
     for (int i = 0; i < HASHMAP_ENTRIES; i++) {
         struct known_node_hashmap_entry * current = known_nodes[i];
         while (current != NULL) {
-            printf("%s:%s:%u\n", current->name, current->ip, current->port);
+            log_debug("%s:%s:%u", current->name, current->ip, current->port);
             current = current->next;
         }
     }

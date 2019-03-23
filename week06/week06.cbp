@@ -70,37 +70,67 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/app.c">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/include/file_transfer.h">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/app.h">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/include/serializers.h">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/client.c">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/bootstrap.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/client.h">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/control.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/ds/hashmap.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/ds/json/interface.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/ds/json/parser.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/ds/refcounter.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/ds/vector.c">
 			<Option target="app"/>
 		</Unit>
 		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/event_loop.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/event_loop.h">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/file_transfer.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/known_nodes_hashmap.c">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/handlers.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/known_nodes_hashmap.h">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/known_files.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/known_nodes.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/logging.c">
 			<Option target="app"/>
 		</Unit>
 		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/main.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/server.c">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/my_files.c">
 			<Option target="app"/>
 		</Unit>
-		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/server.h">
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/pings.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/requests.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/serializers.c">
+			<Option target="app"/>
+		</Unit>
+		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/src/server.c">
 			<Option target="app"/>
 		</Unit>
 		<Unit filename="/Users/ionagamed/Innopolis/BS2/Spring 2019/Networks/Labs/week06/CMakeLists.txt">

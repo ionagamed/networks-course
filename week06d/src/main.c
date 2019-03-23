@@ -5,16 +5,8 @@
 #include "server.h"
 #include "bootstrap.h"
 #include "node.h"
-#include "my_files.h"
-#include "known_files.h"
-#include "known_nodes.h"
+#include "known_nodes_hashmap.h"
 #include "logging.h"
-#include "control.h"
-#include "globals.h"
-#include "event_loop.h"
-#include "requests.h"
-
-#include "include/ds/json.h"
 
 char node_name[NODE_NAME_LEN];
 unsigned short listen_port;
@@ -28,19 +20,16 @@ char * usage =
 "   --name <node name>        set node name\n"
 "   --bootstrap <ip:port>     bootstrap node list from <ip:port> node\n"
 "   -l <debug | info>         set logging level (default info)\n"
-"   -p|--ping <secs>          ping once every <secs> seconds\n"
-"   -s|--control <filename>   control socket filename (default /var/run/node.sock)\n"
-"   --files <directory>       where to load files from\n";
+"   -p|--ping <secs>          ping once every <secs> seconds\n";
 
 #define ADVANCE_ARGS() argc--; argv++;
 #define ADVANCE_ARGS_E() ADVANCE_ARGS(); if (argc <= 0) return -1;
-int parse_args(int argc, char ** argv, char * bootstrap_addr, char * log_level, char * control_socket_filename, char * load_files_from) {
+int parse_args(int argc, char ** argv, char * bootstrap_addr, char * log_level) {
     argc--; argv++;
 
     int got_listen_ip = 0;
     int got_name = 0;
     strcpy(log_level, "info");
-    strcpy(control_socket_filename, "/var/run/node.sock");
 
     if (argc <= 0) return -1;
 
@@ -67,14 +56,6 @@ int parse_args(int argc, char ** argv, char * bootstrap_addr, char * log_level, 
             ADVANCE_ARGS_E();
             ping_interval = atoi(argv[0]);
             ADVANCE_ARGS();
-        } else if (strcmp(argv[0], "-s") == 0 || strcmp(argv[0], "--control") == 0) {
-            ADVANCE_ARGS_E();
-            strcpy(control_socket_filename, argv[0]);
-            ADVANCE_ARGS();
-        } else if (strcmp(argv[0], "--files") == 0) {
-            ADVANCE_ARGS_E();
-            strcpy(load_files_from, argv[0]);
-            ADVANCE_ARGS();
         } else {
             return -1;
         }
@@ -88,15 +69,10 @@ int parse_args(int argc, char ** argv, char * bootstrap_addr, char * log_level, 
 }
 
 int main(int argc, char ** argv) {
-    init_refcounter();
-
     char bootstrap_addr[NODE_IP_LEN];
     char _log_level[10];
-    char control_socket_filename[104];
-    char load_files_from[1000];
-    load_files_from[0] = 0;
 
-    if (parse_args(argc, argv, bootstrap_addr, _log_level, control_socket_filename, load_files_from) != 0) {
+    if (parse_args(argc, argv, bootstrap_addr, _log_level) != 0) {
         printf(usage, argv[0]);
         return -1;
     }
@@ -106,13 +82,7 @@ int main(int argc, char ** argv) {
         return -1;
     }
 
-    init_my_files_hashmap();
-    init_known_files_hashmap();
     init_known_nodes_hashmap();
-
-    if (strlen(load_files_from) != 0) {
-        load_my_files_from(load_files_from);
-    }
 
     if (bootstrap_addr[0] != 0) {
         char * ip = strtok(bootstrap_addr, ":");
@@ -123,17 +93,8 @@ int main(int argc, char ** argv) {
         }
     }
 
-    event_loop_init(MAX_CLIENTS + 1, MAX_PERIODIC_TASKS);
-
     if (server_main(listen_port) < 0) {
-        log_info("Couldn't start server");
+        log_info("Couldn't start server thread");
         return -1;
     }
-
-    if (control_main(control_socket_filename) < 0) {
-        log_info("Couldn't start control");
-        return -1;
-    }
-
-    event_loop_run_loop(EVENT_LOOP_TIMEOUT);
 }

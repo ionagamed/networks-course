@@ -9,10 +9,18 @@
 #include "event_loop.h"
 #include "server.h"
 #include "node.h"
-#include "known_nodes.h"
+#include "magic.h"
+#include "known_nodes_hashmap.h"
+#include "logging.h"
 #include "handlers.h"
+#include "requests.h"
 #include "pings.h"
-#include "common.h"
+#include "globals.h"
+
+#define MAX_CLIENTS 1024
+#define MAX_PERIODIC_TASKS 10
+
+#define EVENT_LOOP_TIMEOUT 1000
 
 int create_master_socket(unsigned short listen_port) {
     int true = 1;
@@ -48,22 +56,13 @@ int create_master_socket(unsigned short listen_port) {
 
 int handle_client_data(int socket, short events, char * ip) {
     char input[BUFFER_SIZE];
+    char output[BUFFER_SIZE];
+    size_t output_len = 0;
     int keep_alive = 0;
 
-    ssize_t nbytes = recv(socket, input, BUFFER_SIZE, 0);
-
-    json_t * request = deserialize_json(input, (uint32_t) nbytes);
-    json_t * request_from = json_get_property(request, "from");
-    json_set_property(request_from, "ip", create_json_string(ip));
-    json_set_property(request_from, "socket", create_json_integer(socket));
-
-    json_t * response = on_client_request(request, &keep_alive);
-
-    if (response != NULL) {
-        char * output = serialize_json(response);
-        send(socket, output, strlen(output), 0);
-        json_destroy(response);
-    }
+    recv(socket, input, BUFFER_SIZE, 0);
+    on_client_request(input, output, &output_len, &keep_alive, ip);
+    send(socket, output, output_len, 0);
 
     if (keep_alive == 0) {
         return -1;
@@ -79,7 +78,7 @@ int handle_new_connection(int socket, short events, void * args) {
 
         int client_socket = accept(socket, (struct sockaddr *) &client_addr, &client_addr_len);
 
-        event_loop_listen_fd(client_socket, POLLIN | POLLHUP | POLLERR, (event_loop_callback_t) handle_client_data, inet_ntoa(client_addr.sin_addr));
+        event_loop_add_fd(client_socket, POLLIN | POLLHUP | POLLERR, (event_loop_callback_t) handle_client_data, inet_ntoa(client_addr.sin_addr));
     }
 
     return 0;
@@ -89,8 +88,10 @@ int server_main(unsigned short listen_port) {
     int master_socket = create_master_socket(listen_port);
     if (master_socket < 0) return -1;
 
-    event_loop_listen_fd(master_socket, POLLIN | POLLHUP | POLLERR, handle_new_connection, NULL);
+    event_loop_init(MAX_CLIENTS + 1, MAX_PERIODIC_TASKS);
+    event_loop_add_fd(master_socket, POLLIN | POLLHUP | POLLERR, handle_new_connection, NULL);
     event_loop_add_periodic_task(ping_all_nodes, ping_interval);
+    event_loop_run_loop(EVENT_LOOP_TIMEOUT);
 
     return 0;
 }
